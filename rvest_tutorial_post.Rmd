@@ -1,0 +1,165 @@
+---
+title: "Untitled"
+description: |
+  A new article created using the Distill format.
+author:
+  - name: Nora Jones 
+    url: https://example.com/norajones
+    affiliation: Spacely Sprockets
+    affiliation_url: https://example.com/spacelysprokets
+date: "`r Sys.Date()`"
+output: distill::distill_article
+params:
+  interactive: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = !params$interactive)
+
+source("libraries.R")
+
+df_manifest <- tar_manifest() |>
+  mutate(command = str_glue("{name} <- {command}"))
+```
+
+```{r, echo=FALSE, eval=TRUE}
+#| fig.cap='Foto von <a href="https://unsplash.com/de/@taylorsiebert?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Taylor Siebert</a> auf <a href="https://unsplash.com/de/fotos/blaues-und-silbernes-lego-spielzeug-LkqmBbrvPZI?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>'
+knitr::include_graphics("taylor-siebert-LkqmBbrvPZI-unsplash.jpg")
+```
+
+# Idea
+
+A short while ago, Hadley Wickham posted on Mastodon about a
+[Tutorial](https://github.com/hadley/web-scraping) he held
+about Web Scrapping. This sounded like an opportunity to dive deeper into
+the topic and learn about all the latest developments of two key packages
+('httr2' and 'rvest').
+
+So in this post I shortly write about my solutions to the exercises in this
+tutorial.
+
+If you want to reproduce this analysis, you have to perform the following steps
+* Clone the [repo]()
+
+# Solutions
+
+To determine the solutions, the following libraries are used:
+
+```{r, eval=FALSE}
+#| file="libraries.R"
+```
+
+
+## Quotes
+
+Define where to look for quotes:
+
+```{r}
+#| code=df_manifest$command[df_manifest$name == "quotes_url"]
+```
+
+```{r}
+#| file="R/quotes.R"
+```
+
+```{r}
+#| code=df_manifest$command[df_manifest$name == "df_quotes"]
+```
+
+```{r}
+#| file="R/quotes_tbl.R"
+```
+
+```{r}
+#| code=df_manifest$command[df_manifest$name == "tbl_quotes"]
+```
+
+```{r, echo=FALSE, eval=TRUE}
+if (params$interactive) {
+  tar_read(tbl_quotes)
+} else {
+  tbl_quotes
+}
+```
+
+## Books
+
+Define where to scrape books from:
+
+```{r}
+#| code=df_manifest$command[df_manifest$name == "books_url"]
+```
+
+Perform request:
+
+```{r}
+#| code=df_manifest$command[df_manifest$name == "resp_books"]
+```
+
+Scrape books:
+
+```{r}
+#| file="R/books.R"
+```
+
+```{r}
+#| code=df_manifest$command[df_manifest$name == "df_books"]
+```
+
+Define how to display book table. Ignore pagination for now:
+
+```{r}
+#| file="R/books_tbl.R"
+```
+
+Take a look at some examples:
+
+```{r}
+#| code=df_manifest$command[df_manifest$name == "tbl_books"]
+```
+
+```{r, echo=FALSE, eval=TRUE}
+if (params$interactive) {
+  tar_read(tbl_books)
+} else {
+  tbl_books
+}
+```
+
+## Books with Pagination
+
+```{r}
+#| file="R/books_all_resp.R"
+```
+
+```{r}
+#| code=df_manifest$command[df_manifest$name == "df_books_all_resp"]
+```
+
+Turn response objects into data frames with the previous written "books"
+function:
+
+```{r}
+#| code=df_manifest$command[df_manifest$name == "df_books_all"]
+```
+
+## Unoffical API
+
+```{r}
+#| file="R/forbes.R"
+```
+
+```{r}
+#| code=df_manifest$command[df_manifest$name == "df_forbes"]
+```
+
+```{r, eval=TRUE, echo=FALSE}
+if (params$interactive) {
+  tar_read(df_forbes)
+} else {
+  df_forbes
+}
+```
+
